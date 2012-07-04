@@ -156,6 +156,17 @@ void cec_callback(void *callback_data, uint32_t param0,
         button_pressed(param1);
 	} else if (reason == VC_CEC_BUTTON_RELEASE && repeating) {
 		xbmc_release_button();
+	} else if (reason == VC_CEC_RX && CEC_CB_OPCODE(param1) == CEC_Opcode_Play)
+	{
+		if (CEC_CB_OPERAND1(param1) == CEC_PLAY_FORWARD) {
+     		xbmc_key("play");		
+		} else if (CEC_CB_OPERAND1(param1) == CEC_PLAY_STILL) {
+			xbmc_key("pause");
+		}
+	} else if (reason == VC_CEC_RX && CEC_CB_OPCODE(param1) == CEC_Opcode_DeckControl) {
+		if (CEC_CB_OPERAND1(param1) == CEC_DECK_CTRL_STOP) {
+			xbmc_key("stop");
+		}
     } else if (reason == VC_CEC_RX && CEC_CB_OPCODE(param1) == CEC_Opcode_MenuRequest ) {
         if (CEC_CB_OPERAND1(param1) == CEC_MENU_STATE_QUERY ) {
             uint8_t msg[2];
@@ -223,6 +234,8 @@ int main(int argc, char **argv)
 #endif
 
     vc_cec_register_command(CEC_Opcode_MenuRequest);
+	vc_cec_register_command(CEC_Opcode_Play);
+	vc_cec_register_command(CEC_Opcode_DeckControl);
 
     vc_cec_get_logical_address(&logical_address);
     printf("logical_address: 0x%x\n", logical_address);
