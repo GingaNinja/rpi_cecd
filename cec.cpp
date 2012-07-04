@@ -154,7 +154,7 @@ void cec_callback(void *callback_data, uint32_t param0,
                     reason, len, retval, param1, param2, param3, param4);
         }
         button_pressed(param1);
-	} else if (reason == VC_CEC_BUTTON_RELEASE && repeating) {
+	} else if ((reason == VC_CEC_BUTTON_RELEASE || reason == VC_CEC_REMOTE_RELEASE) && repeating) {
 		xbmc_release_button();
 	} else if (reason == VC_CEC_RX && CEC_CB_OPCODE(param1) == CEC_Opcode_Play)
 	{
