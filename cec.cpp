@@ -196,16 +196,8 @@ int main(int argc, char **argv)
     setlinebuf(stdout);
     setlinebuf(stderr);
 
-
-    if (argc > 2) {
-        printf("usage: %s [port]\n", argv[0]);
-        return -1;
-    }
-
-    if (argc == 2) {
-        port = atoi(argv[1]);
-    }
-
+	// Do not call bcm_host_init() or vcos_init()
+	// otherwise we'll stop receiving CEC data
 
     res = vchi_initialise(&vchiq_instance);
     if ( res != VCHIQ_SUCCESS ) {
@@ -219,23 +211,21 @@ int main(int argc, char **argv)
         return -1;
     }
 
+	// vc_vchi_cec_init sets vchi_connection to NULL. That's fine
     vc_vchi_cec_init(vchiq_instance, &vchi_connection, 1);
-    if ( res != 0 ) {
-        printf( "VCHI CEC connection failed\n" );
-        return -1;
-    }
 
 	xbmc.SendHELO("CEC Remote", ICON_NONE);
 
     vc_cec_register_callback(((CECSERVICE_CALLBACK_T) cec_callback), NULL);
-
-#if 0
-    vc_cec_register_all();
-#endif
-
     vc_cec_register_command(CEC_Opcode_MenuRequest);
 	vc_cec_register_command(CEC_Opcode_Play);
 	vc_cec_register_command(CEC_Opcode_DeckControl);
+	vc_cec_register_command(CEC_Opcode_GiveDeviceVendorID);
+	vc_cec_register_command(CEC_Opcode_VendorCommand);
+	vc_cec_register_command(CEC_Opcode_GiveDevicePowerStatus);
+	vc_cec_register_command(CEC_Opcode_VendorRemoteButtonDown);
+	vc_cec_register_command(CEC_Opcode_SetStreamPath);
+	vc_cec_register_command(CEC_Opcode_VendorCommandWithID);
 
     vc_cec_get_logical_address(&logical_address);
     printf("logical_address: 0x%x\n", logical_address);
